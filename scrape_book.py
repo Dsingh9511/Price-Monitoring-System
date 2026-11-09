@@ -11,6 +11,9 @@ product_page_url = url
 print(product_page_url)
 
 table_data = soup.find_all("td")
-print(table_data)
 universal_product_code = table_data[0].get_text(strip=True)
 print(universal_product_code)
+price_including_tax = table_data[3].get_text(strip=True)
+print(price_including_tax)
+price_excluding_tax = table_data[2].get_text(strip=True)
+print(price_excluding_tax)
