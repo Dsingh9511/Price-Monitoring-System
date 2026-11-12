@@ -17,3 +17,7 @@ price_including_tax = table_data[3].get_text(strip=True)
 print(price_including_tax)
 price_excluding_tax = table_data[2].get_text(strip=True)
 print(price_excluding_tax)
+
+availability = table_data[5].get_text(strip=True)
+quantity_available = availability
+print(quantity_available)
