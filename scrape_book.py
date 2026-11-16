@@ -28,3 +28,7 @@ print(product_description)
 breadcrumb = soup.find_all("a")
 category = breadcrumb[3].get_text(strip=True)
 print(category)
+
+rating_tag = soup.find("p", class_="star-rating")
+review_rating = rating_tag["class"][1]
+print(review_rating)
