@@ -43,7 +43,6 @@ def scrape_book(url):
     book_data = [product_page_url, universal_product_code, book_title, price_including_tax, price_excluding_tax, quantity_available, product_description, category, review_rating, image_url]
     return book_data
 
-
 url = "https://books.toscrape.com/catalogue/dune-dune-1_151/index.html"
 book = scrape_book(url)
 
@@ -54,13 +53,21 @@ with open("book.csv", "w", newline="", encoding="utf-8-sig") as file:
     writer.writerow(book)
 
 def get_book_urls(category_url):
-    page = requests.get(category_url)
-    soup = BeautifulSoup(page.content, 'html.parser')
     book_urls = []
-    for article in soup.find_all("article", class_="product_pod"):
-        href = article.find("h3").find("a")["href"]
-        book_urls.append(urljoin(category_url, href))
+    page_url = category_url
+    while page_url:
+        page = requests.get(page_url)
+        soup = BeautifulSoup(page.content, 'html.parser')
+        for article in soup.find_all("article", class_="product_pod"):
+            href = article.find("h3").find("a")["href"]
+            book_urls.append(urljoin(page_url, href))
+        next_button = soup.find("li", class_="next")
+        if next_button:
+            page_url = urljoin(page_url, next_button.find("a")["href"])
+        else:
+            page_url = None
     return book_urls
+
 urls = get_book_urls("https://books.toscrape.com/catalogue/category/books/food-and-drink_33/index.html")
 print(len(urls))
 print(urls[0])
