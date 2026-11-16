@@ -21,3 +21,6 @@ print(price_excluding_tax)
 availability = table_data[5].get_text(strip=True)
 quantity_available = availability
 print(quantity_available)
+
+product_description = soup.find("div", id="product_description").find_next("p").get_text(strip=True)
+print(product_description)
