@@ -32,3 +32,8 @@ print(category)
 rating_tag = soup.find("p", class_="star-rating")
 review_rating = rating_tag["class"][1]
 print(review_rating)
+
+from urllib.parse import urljoin
+image_src = soup.find("img")["src"]
+image_url = urljoin(url , image_src)
+print(image_url)
