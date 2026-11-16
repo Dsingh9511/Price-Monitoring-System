@@ -52,3 +52,15 @@ with open("book.csv", "w", newline="", encoding="utf-8-sig") as file:
     writer = csv.writer(file)
     writer.writerow(headers)
     writer.writerow(book)
+
+def get_book_urls(category_url):
+    page = requests.get(category_url)
+    soup = BeautifulSoup(page.content, 'html.parser')
+    book_urls = []
+    for article in soup.find_all("article", class_="product_pod"):
+        href = article.find("h3").find("a")["href"]
+        book_urls.append(urljoin(category_url, href))
+    return book_urls
+urls = get_book_urls("https://books.toscrape.com/catalogue/category/books/food-and-drink_33/index.html")
+print(len(urls))
+print(urls[0])
