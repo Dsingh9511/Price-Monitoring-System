@@ -37,3 +37,11 @@ from urllib.parse import urljoin
 image_src = soup.find("img")["src"]
 image_url = urljoin(url , image_src)
 print(image_url)
+
+import csv
+headers = ["product_page_url", "universal_product_code", "book_title", "price_including_tax", "price_excluding_tax", "quantity_available", "product_description", "category", "review_rating", "image_url"]
+book_data = [product_page_url, universal_product_code, book_title, price_including_tax, price_excluding_tax, quantity_available, product_description, category, review_rating, image_url]
+with open("book.csv", "w", newline="", encoding="utf-8-sig") as file:
+    writer = csv.writer(file)
+    writer.writerow(headers)    
+    writer.writerow(book_data)
