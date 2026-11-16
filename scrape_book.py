@@ -24,3 +24,7 @@ print(quantity_available)
 
 product_description = soup.find("div", id="product_description").find_next("p").get_text(strip=True)
 print(product_description)
+
+breadcrumb = soup.find_all("a")
+category = breadcrumb[3].get_text(strip=True)
+print(category)
