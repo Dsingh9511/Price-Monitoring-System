@@ -25,7 +25,13 @@ def scrape_book(url):
     quantity_available = availability
     print(quantity_available)
 
-    product_description = soup.find("div", id="product_description").find_next("p").get_text(strip=True)
+    # product_description = soup.find("div", id="product_description").find_next("p").get_text(strip=True)
+    # print(product_description)
+    description_tag = soup.find("div", id="product_description")
+    if description_tag:
+        product_description = description_tag.find_next("p").get_text(strip=True) 
+    else:
+        product_description = ""
     print(product_description)
 
     breadcrumb = soup.find_all("a")
@@ -68,13 +74,27 @@ def get_book_urls(category_url):
             page_url = None
     return book_urls
 
-urls = get_book_urls("https://books.toscrape.com/catalogue/category/books/food-and-drink_33/index.html")
-print(len(urls))
-print(urls[0])
+# urls = get_book_urls("https://books.toscrape.com/catalogue/category/books/food-and-drink_33/index.html")
+# print(len(urls))
+# print(urls[0])
 
-with open("food_and_drink.csv", "w", newline="", encoding="utf-8-sig") as file:
-    writer = csv.writer(file)
-    writer.writerow(headers)
-    for url in urls:
-        book = scrape_book(url)
-        writer.writerow(book)
+# with open("food_and_drink.csv", "w", newline="", encoding="utf-8-sig") as file:
+#     writer = csv.writer(file)
+#     writer.writerow(headers)
+#     for url in urls:
+#         book = scrape_book(url)
+#         writer.writerow(book)
+
+def get_category_urls(home_url):
+    category_urls = []
+    page = requests.get(home_url)
+    soup = BeautifulSoup(page.content, 'html.parser')
+    for link in soup.select("div.side_categories ul li ul li a"):
+        href = link["href"]
+        category_urls.append(urljoin(home_url, href))
+    return category_urls
+
+categories = get_category_urls("https://books.toscrape.com/")
+print(len(categories))
+print(categories[0])
+
