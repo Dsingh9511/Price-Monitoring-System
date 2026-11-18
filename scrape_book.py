@@ -71,3 +71,10 @@ def get_book_urls(category_url):
 urls = get_book_urls("https://books.toscrape.com/catalogue/category/books/food-and-drink_33/index.html")
 print(len(urls))
 print(urls[0])
+
+with open("food_and_drink.csv", "w", newline="", encoding="utf-8-sig") as file:
+    writer = csv.writer(file)
+    writer.writerow(headers)
+    for url in urls:
+        book = scrape_book(url)
+        writer.writerow(book)
