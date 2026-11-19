@@ -26,7 +26,7 @@ def scrape_book(url):
     print(quantity_available)
 
     # product_description = soup.find("div", id="product_description").find_next("p").get_text(strip=True)
-    # print(product_description)
+    # print(product_description) kept crashing due to books with no description (alice in wonderland) upon running a test
     description_tag = soup.find("div", id="product_description")
     if description_tag:
         product_description = description_tag.find_next("p").get_text(strip=True) 
@@ -74,16 +74,16 @@ def get_book_urls(category_url):
             page_url = None
     return book_urls
 
-# urls = get_book_urls("https://books.toscrape.com/catalogue/category/books/food-and-drink_33/index.html")
-# print(len(urls))
-# print(urls[0])
+urls = get_book_urls("https://books.toscrape.com/catalogue/category/books/food-and-drink_33/index.html")
+print(len(urls))
+print(urls[0])
 
-# with open("food_and_drink.csv", "w", newline="", encoding="utf-8-sig") as file:
-#     writer = csv.writer(file)
-#     writer.writerow(headers)
-#     for url in urls:
-#         book = scrape_book(url)
-#         writer.writerow(book)
+with open("food_and_drink.csv", "w", newline="", encoding="utf-8-sig") as file:
+    writer = csv.writer(file)
+    writer.writerow(headers)
+    for url in urls:
+        book = scrape_book(url)
+        writer.writerow(book)
 
 def get_category_urls(home_url):
     category_urls = []
@@ -98,3 +98,11 @@ categories = get_category_urls("https://books.toscrape.com/")
 print(len(categories))
 print(categories[0])
 
+for category_url in categories:
+    urls = get_book_urls(category_url)
+    name = category_url.split("/")[-2]
+    with open(f"{name}.csv", "w", newline="", encoding="utf-8-sig") as file:
+        writer = csv.writer(file)
+        writer.writerow(headers)
+        for url in urls:
+            writer.writerow(scrape_book(url))
