@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 import csv
+import os
 
 def scrape_book(url):
     page = requests.get(url)
@@ -49,6 +50,12 @@ def scrape_book(url):
     book_data = [product_page_url, universal_product_code, book_title, price_including_tax, price_excluding_tax, quantity_available, product_description, category, review_rating, image_url]
     return book_data
 
+def download_image(image_url, file_path):
+    response = requests.get(image_url)
+    with open(file_path, "wb") as file:
+        file.write(response.content)
+        
+
 url = "https://books.toscrape.com/catalogue/dune-dune-1_151/index.html"
 book = scrape_book(url)
 
@@ -57,6 +64,8 @@ with open("book.csv", "w", newline="", encoding="utf-8-sig") as file:
     writer = csv.writer(file)
     writer.writerow(headers)
     writer.writerow(book)
+
+download_image(book[9], f"{book[1]}.jpg")
 
 def get_book_urls(category_url):
     book_urls = []
@@ -74,16 +83,6 @@ def get_book_urls(category_url):
             page_url = None
     return book_urls
 
-urls = get_book_urls("https://books.toscrape.com/catalogue/category/books/food-and-drink_33/index.html")
-print(len(urls))
-print(urls[0])
-
-with open("food_and_drink.csv", "w", newline="", encoding="utf-8-sig") as file:
-    writer = csv.writer(file)
-    writer.writerow(headers)
-    for url in urls:
-        book = scrape_book(url)
-        writer.writerow(book)
 
 def get_category_urls(home_url):
     category_urls = []
@@ -94,15 +93,22 @@ def get_category_urls(home_url):
         category_urls.append(urljoin(home_url, href))
     return category_urls
 
+
 categories = get_category_urls("https://books.toscrape.com/")
 print(len(categories))
 print(categories[0])
 
+os.makedirs("data/csv", exist_ok=True)
+
 for category_url in categories:
     urls = get_book_urls(category_url)
     name = category_url.split("/")[-2]
-    with open(f"{name}.csv", "w", newline="", encoding="utf-8-sig") as file:
+    image_folder = f"data/images/{name}"
+    os.makedirs(image_folder, exist_ok=True)
+    with open(f"data/csv/{name}.csv", "w", newline="", encoding="utf-8-sig") as file:
         writer = csv.writer(file)
         writer.writerow(headers)
         for url in urls:
-            writer.writerow(scrape_book(url))
+            book = scrape_book(url)
+            writer.writerow(book)
+            download_image(book[9], f"{image_folder}/{book[1]}.jpg")
